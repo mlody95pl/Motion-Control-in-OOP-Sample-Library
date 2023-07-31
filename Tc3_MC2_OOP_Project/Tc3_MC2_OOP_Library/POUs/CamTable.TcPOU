@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="CamTable" Id="{4dbc9424-92e7-42bb-89db-96e536f03565}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK CamTable IMPLEMENTS itfCamTable
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Select" Id="{f267f0fd-b892-4adb-818b-5335e87f5f6e}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD Select		: itfCommand
+VAR_INPUT
+	Periodic		: BOOL;
+	MasterAbsolute	: BOOL;
+	SlaveAbsolute	: BOOL;
+	CamTable		: MC_CAM_REF;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

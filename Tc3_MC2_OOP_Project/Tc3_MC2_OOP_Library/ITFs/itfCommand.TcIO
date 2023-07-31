@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="itfCommand" Id="{7dbdb552-aff2-43fc-95ff-b80cdb7109a5}">
+    <Declaration><![CDATA[INTERFACE itfCommand
+]]></Declaration>
+    <Method Name="Abort" Id="{71cb0fe7-f024-469d-a609-416dab4b5cdf}">
+      <Declaration><![CDATA[METHOD Abort : MC_Error
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="Active" Id="{864b292b-df5a-420f-9462-8b7e67645ce3}">
+      <Declaration><![CDATA[PROPERTY Active : BOOL]]></Declaration>
+      <Get Name="Get" Id="{19609267-cbf8-4722-b1bf-6d62c7303c99}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Busy" Id="{5ac40040-df89-41c2-af36-124994a82c04}">
+      <Declaration><![CDATA[PROPERTY Busy : BOOL]]></Declaration>
+      <Get Name="Get" Id="{169f8eb3-de93-4c3c-8b30-edd673640ca5}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Command" Id="{409ab707-8363-4fa5-93f9-cd50f90dd4dd}">
+      <Declaration><![CDATA[PROPERTY Command : MC_COMMAND_REF]]></Declaration>
+      <Get Name="Get" Id="{af3de311-2054-4e97-b9e2-5a456a006dcd}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="CommandAborted" Id="{84c7d780-28c4-465a-86c8-063de9e042a6}">
+      <Declaration><![CDATA[PROPERTY CommandAborted : BOOL]]></Declaration>
+      <Get Name="Get" Id="{8d5c7a8f-3d5d-4056-93c4-0d2a6b58a3b6}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Done" Id="{dc85e9d5-6d70-4957-b9a8-ac3b4dbd02d7}">
+      <Declaration><![CDATA[PROPERTY Done : BOOL]]></Declaration>
+      <Get Name="Get" Id="{d68b9c8f-823f-4c62-838a-0570d9da8db5}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Error" Id="{5c194584-797d-4b52-bc0f-89b53dc6ae26}">
+      <Declaration><![CDATA[PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{1ea88778-0737-4551-8457-a20a9e1cdb2e}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="ErrorId" Id="{5c077f40-b3c9-4eb8-9ab7-e2bfcf3410a2}">
+      <Declaration><![CDATA[PROPERTY ErrorId : UDINT]]></Declaration>
+      <Get Name="Get" Id="{fb7a1a80-52d6-41b6-b23b-a7702ed89244}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="Wait" Id="{7bb16dc8-dced-422b-8d79-d1f6b6d9da19}">
+      <Declaration><![CDATA[METHOD Wait : MC_Error // This method only makes sense in the IEC 61499 environment
+VAR_INPUT
+	Timeout : TIME;
+	AbortOnTimeout : BOOL; 
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

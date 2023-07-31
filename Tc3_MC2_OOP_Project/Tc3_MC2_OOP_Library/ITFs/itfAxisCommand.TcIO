@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="itfAxisCommand" Id="{b38daa15-2546-42cc-9a73-eb0aa3db81a1}">
+    <Declaration><![CDATA[INTERFACE itfAxisCommand EXTENDS itfCommand
+]]></Declaration>
+    <Method Name="Update" Id="{a1b329cd-0e0d-4a04-8da6-d3127ced56cf}">
+      <Declaration><![CDATA[METHOD Update : MC_Error
+VAR_INPUT
+	Position : REAL;
+	Velocity : REAL;
+	EndVelocity : REAL;
+	Acceleration : REAL;
+	Deceleration : REAL;
+	Jerk : REAL;
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

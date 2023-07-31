@@ -1,0 +1,339 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="Axis" Id="{894418d7-d964-417c-84bd-c024c03df293}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK Axis
+VAR
+	axisRef				: AXIS_REF;
+	masterAxis			: AXIS_REF;
+	motionCommand		: E_MotionCommand;
+	lastMotionCommand	: E_MotionCommand;
+	mcPower				: MC_Power;
+	mcMoveAbsolute		: MC_MoveAbsolute;
+	mcMoveRelative		: MC_MoveRelative;
+	mcMoveVelocity		: MC_MoveVelocity;
+	mcHalt				: MC_Halt;
+	mcGearIn			: MC_GearIn;
+	mcGearOut			: MC_GearOut;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[axisRef();
+//axisRef.ReadStatus();
+
+IF lastMotionCommand <> motionCommand THEN
+	
+	CASE lastMotionCommand OF
+		
+		eNoCommand:
+			;
+			
+		ePower:
+			;
+			
+		eMoveAbsolute:
+			mcMoveAbsolute	(Axis := THIS^.axisRef, Execute := FALSE);
+			
+		eMoveRelative:
+			mcMoveRelative	(Axis := THIS^.axisRef, Execute := FALSE);
+			
+		eMoveVelocity:
+			mcMoveVelocity	(Axis := THIS^.axisRef, Execute := FALSE);
+			
+		eHalt:
+			mcHalt			(Axis := THIS^.axisRef, Execute := FALSE);
+			
+		eGearIn:
+			mcGearIn		(Master := masterAxis, Slave := THIS^.axisRef, Execute := FALSE);
+			
+		eGearOut:
+			mcGearOut		(Slave := THIS^.axisRef, Execute := FALSE);
+			
+	END_CASE
+	
+	lastMotionCommand := motionCommand;
+	
+END_IF
+
+CASE motionCommand OF
+	
+	eNoCommand:
+		;
+		
+	ePower:
+		mcPower			(Axis := THIS^.axisRef);
+		
+	eMoveAbsolute:
+		mcMoveAbsolute	(Axis := THIS^.axisRef);
+		
+	eMoveRelative:
+		mcMoveRelative	(Axis := THIS^.axisRef);
+		
+	eMoveVelocity:
+		mcMoveVelocity	(Axis := THIS^.axisRef);
+		
+	eHalt:
+		mcHalt			(Axis := THIS^.axisRef);
+		
+	eGearIn:
+		mcGearIn		(Master := masterAxis, Slave := THIS^.axisRef);
+		
+	eGearOut:
+		mcGearOut		(Slave := THIS^.axisRef);
+		
+END_CASE]]></ST>
+    </Implementation>
+    <Folder Name="Control" Id="{53df7bf5-35ad-4c83-92ac-2f64f6f3bdd4}" />
+    <Folder Name="MultiAxesMotion" Id="{3c1ef199-d2fb-48ce-ab88-2b47884cfd88}" />
+    <Folder Name="SingleAxisMotion" Id="{fe41cc56-8f5b-4c08-a132-3b183c025692}" />
+    <Folder Name="Status" Id="{238a185b-aa82-4b7f-9acf-19a4499bed5a}" />
+    <Method Name="GearIn" Id="{9f02a856-a9ff-4ee1-b568-484d29be9f86}" FolderPath="MultiAxesMotion\">
+      <Declaration><![CDATA[METHOD GearIn				: itfSynchronizedAxisCommand
+VAR_INPUT
+//	Execute          		: BOOL;
+    RatioNumerator   		: LREAL;
+    RatioDenominator 		: UINT;
+//	MasterValueSource		: MC_SOURCE;
+    Acceleration     		: LREAL;
+    Deceleration     		: LREAL;
+    Jerk             		: LREAL;
+    BufferMode       		: MC_BufferMode; 
+//    Options          		: ST_GearInOptions;
+END_VAR
+VAR_IN_OUT
+	Master					: AXIS_REF;
+END_VAR
+VAR_INST
+	gearInFb			: SynchronizedAxisCommand;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[mcGearIn.Execute			:= TRUE;
+mcGearIn.RatioNumerator		:= RatioNumerator;
+mcGearIn.RatioDenominator	:= RatioDenominator;
+//mcGearIn.MasterValueSource	:= MasterValueSource;
+mcGearIn.Acceleration		:= Acceleration;
+mcGearIn.Deceleration		:= Deceleration;
+mcGearIn.Jerk				:= Jerk;
+mcGearIn.BufferMode			:= BufferMode;
+//mcmcGearIn.Options			:= Options;
+masterAxis					:= Master;
+
+//gearInFb._done				REF= mcGearIn.Done;
+gearInFb._busy				REF= mcGearIn.Busy;
+gearInFb._active			REF= mcGearIn.Active;
+gearInFb._commandAborted	REF= mcGearIn.CommandAborted;
+gearInFb._error				REF= mcGearIn.Error;
+gearInFb._errorId			REF= mcGearIn.ErrorID;
+
+gearInFb._inSync			REF= mcGearIn.InGear;
+
+motionCommand := eGearIn;
+
+GearIn := gearInFb;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Halt" Id="{3f3648af-31d0-4cae-a2c7-40a237948a69}" FolderPath="SingleAxisMotion\">
+      <Declaration><![CDATA[METHOD Halt			: itfCommand
+VAR_INPUT
+//	Execute      	: BOOL;
+    Deceleration	: LREAL; 
+    Jerk         	: LREAL;
+    BufferMode   	: MC_BufferMode;
+//    Options      	: ST_MoveOptions;
+END_VAR
+VAR_INST
+	haltFb			: AxisCommand;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[mcHalt.Execute			:= TRUE;
+mcHalt.Deceleration		:= Deceleration;
+mcHalt.Jerk				:= Jerk;
+mcHalt.BufferMode		:= BufferMode;
+//mcHalt.Options			:= Options;
+
+haltFb._done			REF= mcHalt.Done;
+haltFb._busy			REF= mcHalt.Busy;
+haltFb._active			REF= mcHalt.Active;
+haltFb._commandAborted	REF= mcHalt.CommandAborted;
+haltFb._error			REF= mcHalt.Error;
+haltFb._errorId			REF= mcHalt.ErrorID;
+
+motionCommand := eHalt;
+
+Halt := haltFb;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MoveAbsolute" Id="{73f3bbac-760d-4aba-a61f-caddf6a8fe39}" FolderPath="SingleAxisMotion\">
+      <Declaration><![CDATA[METHOD MoveAbsolute : itfCommand
+VAR_INPUT
+//	Execute      	: BOOL;
+    Position     	: LREAL; 
+    Velocity     	: LREAL; 
+    Acceleration 	: LREAL; 
+    Deceleration 	: LREAL; 
+    Jerk         	: LREAL;
+    BufferMode   	: MC_BufferMode;
+//    Options      	: ST_MoveOptions;
+END_VAR
+VAR_INST
+	moveAbsoluteFb	: AxisCommand;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[mcMoveAbsolute.Execute			:= TRUE;
+mcMoveAbsolute.Position			:= Position;
+mcMoveAbsolute.Velocity			:= Velocity;
+mcMoveAbsolute.Acceleration		:= Acceleration;
+mcMoveAbsolute.Deceleration		:= Deceleration;
+mcMoveAbsolute.Jerk				:= Jerk;
+mcMoveAbsolute.BufferMode		:= BufferMode;
+//mcMoveAbsolute.Options			:= Options;
+
+moveAbsoluteFb._done			REF= mcMoveAbsolute.Done;
+moveAbsoluteFb._busy			REF= mcMoveAbsolute.Busy;
+moveAbsoluteFb._active			REF= mcMoveAbsolute.Active;
+moveAbsoluteFb._commandAborted	REF= mcMoveAbsolute.CommandAborted;
+moveAbsoluteFb._error			REF= mcMoveAbsolute.Error;
+moveAbsoluteFb._errorId			REF= mcMoveAbsolute.ErrorID;
+
+motionCommand := eMoveAbsolute;
+
+MoveAbsolute := moveAbsoluteFb;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MoveRelative" Id="{68d6025f-20ff-4968-a307-9ec27f8a89c7}" FolderPath="SingleAxisMotion\">
+      <Declaration><![CDATA[METHOD MoveRelative : itfCommand
+VAR_INPUT
+//	Execute      	: BOOL;
+    Distance     	: LREAL; 
+    Velocity     	: LREAL; 
+    Acceleration 	: LREAL; 
+    Deceleration 	: LREAL; 
+    Jerk         	: LREAL;
+    BufferMode   	: MC_BufferMode;
+//    Options      	: ST_MoveOptions;
+END_VAR
+VAR_INST
+	moveRelativeFb	: AxisCommand;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[mcMoveRelative.Execute			:= TRUE;
+mcMoveRelative.Distance			:= Distance;
+mcMoveRelative.Velocity			:= Velocity;
+mcMoveRelative.Acceleration		:= Acceleration;
+mcMoveRelative.Deceleration		:= Deceleration;
+mcMoveRelative.Jerk				:= Jerk;
+mcMoveRelative.BufferMode		:= BufferMode;
+//mcMoveRelative.Options			:= Options;
+
+moveRelativeFb._done			REF= mcMoveRelative.Done;
+moveRelativeFb._busy			REF= mcMoveRelative.Busy;
+moveRelativeFb._active			REF= mcMoveRelative.Active;
+moveRelativeFb._commandAborted	REF= mcMoveRelative.CommandAborted;
+moveRelativeFb._error			REF= mcMoveRelative.Error;
+moveRelativeFb._errorId			REF= mcMoveRelative.ErrorID;
+
+motionCommand := eMoveRelative;
+
+MoveRelative := moveRelativeFb;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MoveVelocity" Id="{347f487f-9c59-44e9-8e7c-6e306914a2c1}" FolderPath="SingleAxisMotion\">
+      <Declaration><![CDATA[METHOD MoveVelocity : itfCommand
+VAR_INPUT
+//	Execute      	: BOOL;
+    Velocity     	: LREAL; 
+    Acceleration 	: LREAL; 
+    Deceleration 	: LREAL; 
+    Jerk         	: LREAL;
+	Direction		: MC_Direction := MC_Positive_Direction;
+    BufferMode   	: MC_BufferMode;
+//    Options      	: ST_MoveOptions;
+END_VAR
+VAR_INST
+	moveVelocityFb	: AxisCommand;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[mcMoveVelocity.Execute			:= TRUE;
+mcMoveVelocity.Velocity			:= Velocity;
+mcMoveVelocity.Acceleration		:= Acceleration;
+mcMoveVelocity.Deceleration		:= Deceleration;
+mcMoveVelocity.Jerk				:= Jerk;
+mcMoveVelocity.Direction		:= Direction;
+mcMoveVelocity.BufferMode		:= BufferMode;
+//mcMoveVelocity.Options			:= Options;
+
+moveVelocityFb._done			REF= mcMoveVelocity.InVelocity;
+moveVelocityFb._busy			REF= mcMoveVelocity.Busy;
+moveVelocityFb._active			REF= mcMoveVelocity.Active;
+moveVelocityFb._commandAborted	REF= mcMoveVelocity.CommandAborted;
+moveVelocityFb._error			REF= mcMoveVelocity.Error;
+moveVelocityFb._errorId			REF= mcMoveVelocity.ErrorID;
+
+motionCommand := eMoveVelocity;
+
+MoveVelocity := moveVelocityFb;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Power" Id="{f2e70ee2-6866-4cb2-8853-3d52110d163e}" FolderPath="Control\">
+      <Declaration><![CDATA[METHOD Power		: itfCommand
+VAR_INPUT
+	Enable          : BOOL;
+    Enable_Positive : BOOL;
+    Enable_Negative : BOOL;
+//    Override        : LREAL := 100.0;
+//    BufferMode      : MC_BufferMode;
+//    Options         : ST_PowerOptions;
+END_VAR
+VAR_INST
+	powerFb			: AxisCommand;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[mcPower.Enable			:= Enable;
+mcPower.Enable_Positive	:= Enable_Positive;
+mcPower.Enable_Negative	:= Enable_Negative;
+//mcPower.Override		:= Override;
+//mcPower.BufferMode		:= BufferMode;
+//mcPower.Options			:= Options;
+
+//powerFb._status			REF= mcPower.Status;
+powerFb._busy			REF= mcPower.Busy;
+powerFb._active			REF= mcPower.Active;
+powerFb._error			REF= mcPower.Error;
+powerFb._errorId		REF= mcPower.ErrorID;
+
+motionCommand := ePower;
+
+Power := powerFb;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ReadStatus" Id="{79b06faa-45b4-434e-9c32-0dffe2a402f4}">
+      <Declaration><![CDATA[METHOD ReadStatus
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^();
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Release" Id="{cc8e97ae-999c-490b-b3f4-0976c89106ba}" FolderPath="Control\">
+      <Declaration><![CDATA[METHOD Release	: UDINT
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Status" Id="{ff11510f-c1c9-4d4e-80f5-ac2da7d01de9}" FolderPath="Status\">
+      <Declaration><![CDATA[{attribute 'monitoring' := 'variable'}
+PROPERTY Status : MC_AxisStates]]></Declaration>
+      <Get Name="Get" Id="{44a15907-202d-472b-bdd2-dac77f115f9e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Status := axisRef.Status.MotionState;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+  </POU>
+</TcPlcObject>

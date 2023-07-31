@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="SynchronizedAxisCommand" Id="{fe2de06b-5354-4424-9064-414e3fd39de4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK SynchronizedAxisCommand EXTENDS AxisCommand IMPLEMENTS itfSynchronizedAxisCommand
+VAR_INPUT
+	_inSync	: REFERENCE TO BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="InSync" Id="{7688c86b-fa5d-4f2e-98b4-fa9c4c55dc1e}">
+      <Declaration><![CDATA[PROPERTY InSync : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{3f7abc23-1405-413c-9798-1e9c34d06acb}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[InSync := _inSync;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+  </POU>
+</TcPlcObject>
